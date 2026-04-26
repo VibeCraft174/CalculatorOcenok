@@ -2,592 +2,607 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Кликер-автомат — запись и повтор на любом сайте</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Кликер-автомат — простой конструктор действий</title>
   <style>
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
 
     body {
-      background: linear-gradient(145deg, #eef2f5 0%, #dce5ed 100%);
-      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-      padding: 1.5rem;
+      background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+      font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+      padding: 2rem 1.5rem;
       min-height: 100vh;
     }
 
     .main-container {
-      max-width: 1600px;
+      max-width: 1400px;
       margin: 0 auto;
     }
 
-    /* карточки */
+    /* Карточки */
     .card {
       background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(2px);
-      border-radius: 1.8rem;
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
-      padding: 1.2rem 1.5rem;
-      margin-bottom: 1.5rem;
+      border-radius: 2rem;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+      padding: 1.6rem;
+      transition: all 0.2s;
+      border: 1px solid rgba(255,255,255,0.5);
     }
 
-    h1 {
-      font-size: 2rem;
-      background: linear-gradient(105deg, #1a5d7a, #248f6c);
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(120deg, #0f2b3d, #1f6e8c);
       background-clip: text;
       -webkit-background-clip: text;
       color: transparent;
-      display: inline-block;
+      margin-bottom: 0.25rem;
     }
 
-    .sub {
-      color: #2c697e;
-      margin-top: 0.2rem;
-      margin-bottom: 1rem;
+    .header p {
+      color: #2c5a6e;
+      font-size: 1rem;
     }
 
-    .flex-row {
+    .two-columns {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
-      align-items: flex-end;
-      margin-bottom: 1.2rem;
+      gap: 2rem;
+      margin-bottom: 2rem;
     }
 
-    .field {
-      flex: 2;
-      min-width: 200px;
+    .column {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .action-builder {
+      background: #ffffffdd;
+    }
+
+    .form-group {
+      margin-bottom: 1.3rem;
     }
 
     label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: #1f6582;
       display: block;
+      font-weight: 600;
+      font-size: 0.8rem;
+      margin-bottom: 0.4rem;
+      color: #1a4d6b;
+      letter-spacing: 0.3px;
     }
 
-    input, button {
-      border-radius: 2rem;
-      border: none;
-      padding: 0.6rem 1rem;
-      font-size: 0.9rem;
-    }
-
-    input {
+    select, input {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border-radius: 1.2rem;
       border: 1px solid #cbdbe6;
       background: white;
-      width: 100%;
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #2c7da0;
+      box-shadow: 0 0 0 3px rgba(44,125,160,0.2);
+    }
+
+    .dynamic-fields {
+      background: #f3f9fe;
+      border-radius: 1.2rem;
+      padding: 0.8rem;
+      margin-top: 0.5rem;
     }
 
     button {
-      background: #2c7a6e;
+      background: #2c7da0;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 700;
       color: white;
-      font-weight: bold;
       cursor: pointer;
       transition: 0.2s;
+      font-size: 0.9rem;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      gap: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
-    button.record {
-      background: #c0422c;
+    button.primary {
+      background: #1f6e8c;
+      box-shadow: 0 6px 14px rgba(31,110,140,0.3);
     }
-    button.record.recording {
-      background: #8b2c1a;
-      animation: pulse 0.8s infinite;
+    button.primary:hover {
+      background: #0f5b7a;
+      transform: translateY(-2px);
     }
-    button.play {
-      background: #1f886b;
+    button.success {
+      background: #2c7a47;
     }
     button.danger {
-      background: #b65847;
+      background: #bc6c5e;
     }
     button.secondary {
-      background: #5887a8;
+      background: #5f8b9e;
     }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 #ff8a6f; }
-      70% { box-shadow: 0 0 0 6px rgba(192,66,44,0); }
-      100% { box-shadow: 0 0 0 0 rgba(192,66,44,0); }
-    }
-
-    .iframe-wrapper {
-      background: #1a2a35;
-      border-radius: 1.2rem;
-      padding: 0.5rem;
-      box-shadow: inset 0 0 0 1px #cbdbe6, 0 10px 20px rgba(0,0,0,0.1);
-    }
-
-    iframe {
-      width: 100%;
-      height: 550px;
-      border-radius: 1rem;
-      border: none;
-      background: white;
+    button.small {
+      padding: 0.3rem 0.8rem;
+      font-size: 0.7rem;
     }
 
     .actions-list {
-      background: #f1f7fd;
+      background: #f8fafd;
       border-radius: 1.2rem;
-      padding: 0.8rem;
-      max-height: 280px;
+      padding: 0.5rem;
+      max-height: 380px;
       overflow-y: auto;
     }
 
     .action-item {
       background: white;
       border-radius: 1rem;
-      margin: 0.5rem 0;
-      padding: 0.5rem 0.8rem;
+      margin: 0.6rem 0;
+      padding: 0.8rem 1rem;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.6rem;
-      border-left: 4px solid #2c7a6e;
+      gap: 0.8rem;
+      border: 1px solid #e2edf2;
+      transition: 0.1s;
     }
-    .action-icon { font-size: 1.2rem; width: 36px; text-align: center; }
-    .action-text { flex: 4; font-size: 0.8rem; color: #1f3e54; }
-    .action-controls button { background: #e2edf3; color: #1f5a73; padding: 0.2rem 0.7rem; font-size: 0.7rem; }
 
-    .log-area {
-      background: #0c2d3b;
-      border-radius: 1rem;
-      padding: 0.6rem;
-      height: 130px;
-      overflow-y: auto;
+    .action-icon {
+      font-size: 1.4rem;
+      min-width: 44px;
+      text-align: center;
+    }
+
+    .action-description {
+      flex: 4;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #1f4058;
+    }
+
+    .action-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .status-log {
+      background: #0f2c3b;
+      border-radius: 1.2rem;
+      padding: 1rem;
+      color: #c7edff;
       font-family: monospace;
-      font-size: 0.8rem;
-      color: #cbe9f5;
+      font-size: 0.85rem;
+      height: 160px;
+      overflow-y: auto;
     }
 
-    .badge {
-      background: #5887a8;
+    .log-line {
+      border-bottom: 1px solid #2f5e7a;
+      padding: 5px 0;
+    }
+
+    .flex-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 1rem;
+      justify-content: space-between;
+    }
+
+    .badge-count {
+      background: #2c7da0;
       color: white;
       border-radius: 40px;
-      padding: 0.2rem 0.8rem;
-      font-size: 0.7rem;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.75rem;
       font-weight: bold;
     }
 
-    hr { margin: 0.7rem 0; border-color: #ccdee9; }
+    hr {
+      margin: 1rem 0;
+      border-color: #cfe2ef;
+    }
+
+    @media (max-width: 800px) {
+      body { padding: 1rem; }
+      .action-item { flex-direction: column; align-items: stretch; }
+      .action-controls { justify-content: flex-end; }
+    }
   </style>
 </head>
 <body>
 <div class="main-container">
-  <div class="card">
-    <h1>🤖 Робот-кликер</h1>
-    <div class="sub">Запишите ваши клики и ввод текста на любом сайте — потом повторяйте автоматически</div>
-    
-    <div class="flex-row">
-      <div class="field">
-        <label>🌐 Адрес сайта для автоматизации</label>
-        <input type="text" id="siteUrl" placeholder="https://example.com или оставьте пустым для тестовой страницы" value="https://example.com">
+  <div class="header">
+    <h1>🤖 Кликер-автомат</h1>
+    <p>Задайте последовательность действий: клики, ввод текста, паузы — и повторяйте сколько нужно</p>
+  </div>
+
+  <div class="two-columns">
+    <!-- ЛЕВАЯ КОЛОНКА: СОЗДАНИЕ ДЕЙСТВИЯ -->
+    <div class="column card action-builder">
+      <h2 style="font-size:1.4rem; margin-bottom:1rem;">➕ Новое действие</h2>
+      <div class="form-group">
+        <label>🔧 Тип действия</label>
+        <select id="actionType">
+          <option value="click">🖱️ Кликнуть по элементу</option>
+          <option value="input">⌨️ Ввести текст в поле</option>
+          <option value="wait">⏳ Подождать (мс)</option>
+        </select>
       </div>
-      <div>
-        <button id="loadSiteBtn">📂 Загрузить сайт в окно</button>
+
+      <!-- Динамические поля будут меняться -->
+      <div id="dynamicFields" class="dynamic-fields">
+        <!-- сюда подставится нужный набор полей -->
       </div>
+
+      <button id="addActionBtn" class="primary" style="width:100%; justify-content:center; margin-top:0.5rem;">➕ Добавить действие в список</button>
     </div>
-    <div class="flex-row">
-      <button id="startRecordBtn" class="record">🔴 НАЧАТЬ ЗАПИСЬ (внутри окна)</button>
-      <button id="stopRecordBtn" class="secondary">⏹️ Остановить запись</button>
-      <button id="runPlayBtn" class="play">▶ ЗАПУСТИТЬ ПОВТОР</button>
-      <button id="stopPlayBtn" class="danger">⏹️ Остановить повтор</button>
-      <button id="clearAllBtn" class="secondary">🗑️ Очистить действия</button>
-    </div>
-    <div class="flex-row">
-      <div class="field">
-        <label>🔁 Количество повторов</label>
-        <input type="number" id="repeatCount" min="1" max="999" value="3">
+
+    <!-- ПРАВАЯ КОЛОНКА: ЗАПУСК И ПОВТОРЫ -->
+    <div class="column card">
+      <h2 style="font-size:1.4rem; margin-bottom:1rem;">⚙️ Параметры запуска</h2>
+      <div class="form-group">
+        <label>🔁 Сколько раз повторить алгоритм?</label>
+        <input type="number" id="repeatCount" min="1" max="999" value="3" step="1">
       </div>
-      <div class="field">
-        <label>⏱️ Задержка между повторами (мс)</label>
-        <input type="number" id="loopDelay" min="0" max="10000" value="500">
+      <div class="form-group">
+        <label>⏱️ Задержка между циклами (мс)</label>
+        <input type="number" id="loopDelay" min="0" max="10000" value="500" step="100">
       </div>
-    </div>
-    <div>
-      <span id="recordStatusBadge" class="badge" style="background:#5a6e7c;">⚪ Запись не активна</span>
-      <span style="margin-left: 1rem; font-size:0.75rem;">💡 <strong>Как пользоваться:</strong> 1) Загрузите сайт. 2) Нажмите «Начать запись». 3) Кликайте и вводите текст внутри окна. 4) Нажмите «Остановить запись». 5) Нажмите «Запустить повтор» — всё повторится.</span>
+      <div class="flex-buttons">
+        <button id="runBtn" class="success">▶ ЗАПУСТИТЬ</button>
+        <button id="stopBtn" class="danger">⏹️ ОСТАНОВИТЬ</button>
+        <button id="clearAllBtn" class="secondary">🗑️ Очистить все</button>
+      </div>
+      <div class="form-group" style="margin-top: 1rem;">
+        <div style="font-size:0.7rem; background:#eef3fa; border-radius:1rem; padding:0.5rem;">
+          💡 <strong>Важно:</strong> Действия будут выполняться на той же вкладке, где открыта эта страница. Убедитесь, что нужные элементы (кнопки, поля) видны на экране.
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- iframe с целевым сайтом -->
-  <div class="iframe-wrapper">
-    <iframe id="targetFrame" src="about:blank" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-top-navigation-by-user-activation"></iframe>
-  </div>
-
-  <!-- Список записанных действий -->
-  <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: baseline;">
-      <h3>📋 Записанная последовательность</h3>
-      <span id="actionCount" class="badge">0 действий</span>
+  <!-- СПИСОК ДЕЙСТВИЙ -->
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 1rem;">
+      <h2 style="font-size:1.3rem;">📋 Мой алгоритм</h2>
+      <span class="badge-count" id="actionCount">0 действий</span>
     </div>
-    <div id="actionsList" class="actions-list" style="margin-top: 0.8rem;">
-      <div style="text-align:center; padding: 1rem;">Нет действий. Начните запись и кликайте внутри окна.</div>
+    <div id="actionsList" class="actions-list">
+      <div style="text-align:center; padding:2rem; color:#7c9ab3;">Пока нет действий. Добавьте первое действие слева 👈</div>
+    </div>
+    <div style="margin-top: 10px;">
+      <button id="exampleBtn" class="secondary small">✨ Пример: нажать на кнопку → ввести текст → пауза</button>
     </div>
   </div>
 
-  <!-- Журнал -->
+  <!-- ЖУРНАЛ -->
   <div class="card">
-    <h3>📜 Журнал событий</h3>
-    <div id="logPanel" class="log-area">
-      <div>✅ Готово. Загрузите сайт и нажмите «Начать запись».</div>
+    <h2 style="font-size:1.3rem; margin-bottom:0.8rem;">📜 Журнал событий</h2>
+    <div id="logContainer" class="status-log">
+      <div class="log-line">✅ Готов к работе. Добавьте действия и нажмите "ЗАПУСТИТЬ".</div>
     </div>
   </div>
 </div>
 
 <script>
-  // ---- Глобальные переменные ----
-  let actions = [];                // {type, selector, text, waitMs}
-  let isRecording = false;
-  let lastTimestamp = null;
-  let isPlaying = false;
-  let stopPlayFlag = false;
-  let currentIframe = null;
-  let iframeDocument = null;
+  // ----- Хранилище действий
+  let actions = [];      // каждый элемент: { type, clickSelector, inputSelector, inputText, waitMs }
+  let isRunning = false;
+  let stopFlag = false;
+  let currentTimeout = null;
 
   // DOM элементы
-  const siteUrlInput = document.getElementById('siteUrl');
-  const loadSiteBtn = document.getElementById('loadSiteBtn');
-  const startRecordBtn = document.getElementById('startRecordBtn');
-  const stopRecordBtn = document.getElementById('stopRecordBtn');
-  const runPlayBtn = document.getElementById('runPlayBtn');
-  const stopPlayBtn = document.getElementById('stopPlayBtn');
+  const actionTypeSelect = document.getElementById('actionType');
+  const dynamicFieldsDiv = document.getElementById('dynamicFields');
+  const addActionBtn = document.getElementById('addActionBtn');
+  const actionsListDiv = document.getElementById('actionsList');
+  const runBtn = document.getElementById('runBtn');
+  const stopBtn = document.getElementById('stopBtn');
   const clearAllBtn = document.getElementById('clearAllBtn');
   const repeatCountInput = document.getElementById('repeatCount');
   const loopDelayInput = document.getElementById('loopDelay');
-  const recordStatusBadge = document.getElementById('recordStatusBadge');
-  const actionsListDiv = document.getElementById('actionsList');
+  const exampleBtn = document.getElementById('exampleBtn');
   const actionCountSpan = document.getElementById('actionCount');
-  const logPanel = document.getElementById('logPanel');
-  const targetFrame = document.getElementById('targetFrame');
 
   // Логирование
   function addLog(msg, isError = false) {
     const logDiv = document.createElement('div');
-    logDiv.style.borderBottom = '1px solid #2a6c7c';
-    logDiv.style.padding = '3px 0';
-    logDiv.style.color = isError ? '#ffbc9a' : '#d4f1f9';
+    logDiv.className = 'log-line';
+    logDiv.style.color = isError ? '#ffbfa6' : '#c7edff';
     logDiv.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-    logPanel.appendChild(logDiv);
+    const logContainer = document.getElementById('logContainer');
+    logContainer.appendChild(logDiv);
     logDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    while (logPanel.children.length > 80) logPanel.removeChild(logPanel.firstChild);
+    // ограничим историю
+    while (logContainer.children.length > 120) logContainer.removeChild(logContainer.firstChild);
   }
 
-  // --- Генератор простого селектора для элемента внутри iframe ---
-  function getSimpleSelector(el) {
-    if (!el) return 'body';
-    if (el.id) return `#${el.id.replace(/[^\w-]/g, '\\$&')}`;
-    if (el.className && typeof el.className === 'string') {
-      let cls = el.className.trim().split(/\s+/)[0];
-      if (cls) return `${el.tagName.toLowerCase()}.${cls}`;
-    }
-    let path = [];
-    let curr = el;
-    while (curr && curr !== iframeDocument?.body && path.length < 4) {
-      let tag = curr.tagName.toLowerCase();
-      if (curr.id) {
-        path.unshift(`#${curr.id}`);
-        break;
-      }
-      let idx = 1;
-      let sibling = curr.previousElementSibling;
-      while (sibling) {
-        if (sibling.tagName === curr.tagName) idx++;
-        sibling = sibling.previousElementSibling;
-      }
-      path.unshift(`${tag}:nth-of-type(${idx})`);
-      curr = curr.parentElement;
-    }
-    return path.join(' > ');
-  }
-
-  // Привязка событий записи внутри iframe
-  function bindRecordingEvents(frameDoc) {
-    if (!frameDoc) return;
-    // Удаляем старые, чтобы не дублировать
-    frameDoc.removeEventListener('click', onIframeClick, true);
-    frameDoc.removeEventListener('input', onIframeInput, true);
-    frameDoc.addEventListener('click', onIframeClick, true);
-    frameDoc.addEventListener('input', onIframeInput, true);
-  }
-
-  function unbindRecordingEvents(frameDoc) {
-    if (frameDoc) {
-      frameDoc.removeEventListener('click', onIframeClick, true);
-      frameDoc.removeEventListener('input', onIframeInput, true);
+  // --- Динамические поля в зависимости от типа действия ---
+  function renderDynamicFields() {
+    const type = actionTypeSelect.value;
+    if (type === 'click') {
+      dynamicFieldsDiv.innerHTML = `
+        <div class="form-group">
+          <label>🎯 CSS-селектор элемента (куда кликнуть)</label>
+          <input type="text" id="clickSelector" placeholder="например: #myButton, .submit, button[type='submit']" value="#targetButton">
+          <div style="font-size:0.7rem; margin-top:5px;">Примеры: #id, .класс, button, div[data-test="ok"]</div>
+        </div>
+      `;
+    } else if (type === 'input') {
+      dynamicFieldsDiv.innerHTML = `
+        <div class="form-group">
+          <label>📌 Селектор поля ввода</label>
+          <input type="text" id="inputSelector" placeholder="например: #username, .email, input[name='q']" value="#myInput">
+        </div>
+        <div class="form-group">
+          <label>✏️ Текст, который нужно ввести</label>
+          <input type="text" id="inputText" placeholder="Ваш текст..." value="Привет, авто-кликер!">
+        </div>
+      `;
+    } else if (type === 'wait') {
+      dynamicFieldsDiv.innerHTML = `
+        <div class="form-group">
+          <label>⏱️ Длительность паузы (миллисекунды)</label>
+          <input type="number" id="waitMs" min="100" max="30000" value="800" step="100">
+          <div style="font-size:0.7rem;">1000 мс = 1 секунда</div>
+        </div>
+      `;
     }
   }
 
-  function onIframeClick(e) {
-    if (!isRecording) return;
-    e.stopPropagation();
-    const target = e.target;
-    const selector = getSimpleSelector(target);
-    const now = Date.now();
-    let waitMs = 0;
-    if (lastTimestamp !== null) {
-      waitMs = now - lastTimestamp;
-      if (waitMs > 30) {
-        actions.push({ type: 'wait', waitMs: waitMs });
-      }
+  // Получить текущее действие из формы
+  function getCurrentAction() {
+    const type = actionTypeSelect.value;
+    if (type === 'click') {
+      const selector = document.getElementById('clickSelector')?.value.trim();
+      if (!selector) return null;
+      return { type: 'click', selector: selector };
+    } else if (type === 'input') {
+      const selector = document.getElementById('inputSelector')?.value.trim();
+      const text = document.getElementById('inputText')?.value;
+      if (!selector) return null;
+      return { type: 'input', selector: selector, text: text || '' };
+    } else if (type === 'wait') {
+      let ms = parseInt(document.getElementById('waitMs')?.value, 10);
+      if (isNaN(ms)) ms = 500;
+      return { type: 'wait', duration: ms };
     }
-    actions.push({ type: 'click', selector: selector });
-    lastTimestamp = now;
+    return null;
+  }
+
+  // Добавление действия
+  function addAction() {
+    const newAction = getCurrentAction();
+    if (!newAction) {
+      addLog('❌ Не заполнено обязательное поле (селектор)', true);
+      return;
+    }
+    actions.push(newAction);
     renderActionsList();
-    addLog(`🖱️ Записано: клик по ${selector}`);
+    addLog(`➕ Добавлено действие: ${formatActionText(newAction)}`);
   }
 
-  function onIframeInput(e) {
-    if (!isRecording) return;
-    const target = e.target;
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-      let value = target.value !== undefined ? target.value : target.innerText;
-      if (value === undefined) return;
-      const selector = getSimpleSelector(target);
-      const now = Date.now();
-      let waitMs = 0;
-      if (lastTimestamp !== null) {
-        waitMs = now - lastTimestamp;
-        if (waitMs > 30) {
-          actions.push({ type: 'wait', waitMs: waitMs });
-        }
-      }
-      actions.push({ type: 'input', selector: selector, text: value });
-      lastTimestamp = now;
-      renderActionsList();
-      addLog(`⌨️ Записано: ввод "${value.substring(0, 40)}" в ${selector}`);
-    }
-  }
-
-  // Загрузить сайт в iframe
-  function loadSite() {
-    let url = siteUrlInput.value.trim();
-    if (!url) url = 'https://example.com';
-    if (!url.startsWith('http')) url = 'https://' + url;
-    targetFrame.src = url;
-    addLog(`📄 Загружаем сайт: ${url}`);
-    // Ждём загрузки iframe
-    targetFrame.onload = () => {
-      try {
-        iframeDocument = targetFrame.contentDocument || targetFrame.contentWindow?.document;
-        if (!iframeDocument) {
-          addLog('❌ Не удалось получить доступ к iframe (возможно, сайт запрещает встраивание)', true);
-          return;
-        }
-        addLog(`✅ Сайт загружен, можно начинать запись.`);
-        // Если запись уже активна, перепривяжем события
-        if (isRecording) {
-          bindRecordingEvents(iframeDocument);
-        }
-      } catch (err) {
-        addLog(`❌ Ошибка доступа к iframe: ${err.message} (сайт запрещает встраивание)`, true);
-      }
-    };
-  }
-
-  // Начать запись
-  function startRecording() {
-    if (isPlaying) {
-      addLog('Сначала остановите воспроизведение', true);
-      return;
-    }
-    if (!iframeDocument) {
-      addLog('Сначала загрузите сайт в окно (кнопка "Загрузить сайт")', true);
-      return;
-    }
-    if (isRecording) {
-      addLog('Запись уже активна', false);
-      return;
-    }
-    isRecording = true;
-    lastTimestamp = Date.now();
-    recordStatusBadge.innerText = '🔴 ЗАПИСЬ АКТИВНА (кликайте в окне)';
-    recordStatusBadge.style.background = '#c0422c';
-    startRecordBtn.classList.add('recording');
-    bindRecordingEvents(iframeDocument);
-    addLog('🎙️ Запись началась. Теперь кликайте и вводите текст внутри загруженного сайта.');
-  }
-
-  function stopRecording() {
-    if (!isRecording) {
-      addLog('Запись не активна', false);
-      return;
-    }
-    isRecording = false;
-    recordStatusBadge.innerText = '⚪ Запись остановлена';
-    recordStatusBadge.style.background = '#5a6e7c';
-    startRecordBtn.classList.remove('recording');
-    unbindRecordingEvents(iframeDocument);
-    addLog(`🛑 Запись завершена. Сохранено действий: ${actions.length}`);
-    if (actions.length === 0) addLog('Нет действий. Сделайте клики/ввод текста во время записи.', true);
+  function formatActionText(action) {
+    if (action.type === 'click') return `Клик по "${action.selector}"`;
+    if (action.type === 'input') return `Ввод текста в "${action.selector}" → "${action.text}"`;
+    if (action.type === 'wait') return `Пауза ${action.duration} мс`;
+    return '';
   }
 
   // Отображение списка действий
   function renderActionsList() {
-    if (!actions.length) {
-      actionsListDiv.innerHTML = `<div style="text-align:center; padding: 1rem;">📭 Нет действий. Начните запись и взаимодействуйте с сайтом.</div>`;
-      actionCountSpan.innerText = '0 действий';
+    if (actions.length === 0) {
+      actionsListDiv.innerHTML = `<div style="text-align:center; padding:2rem; color:#7c9ab3;">📭 Список пуст. Добавьте клики или ввод текста.</div>`;
+      actionCountSpan.innerText = `0 действий`;
       return;
     }
-    actionCountSpan.innerText = actions.length + ' ' + declension(actions.length);
+    actionCountSpan.innerText = `${actions.length} ${declension(actions.length)}`;
     actionsListDiv.innerHTML = '';
     actions.forEach((act, idx) => {
-      const row = document.createElement('div');
-      row.className = 'action-item';
-      let icon = '';
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'action-item';
+      let icon = act.type === 'click' ? '🖱️' : (act.type === 'input' ? '⌨️' : '⏳');
       let desc = '';
-      if (act.type === 'click') {
-        icon = '🖱️';
-        desc = `Кликнуть по: ${act.selector}`;
-      } else if (act.type === 'input') {
-        icon = '⌨️';
-        desc = `Ввести "${act.text}" в поле: ${act.selector}`;
-      } else {
-        icon = '⏳';
-        desc = `Пауза ${act.waitMs} мс (автоматическая)`;
-      }
-      row.innerHTML = `
+      if (act.type === 'click') desc = `Кликнуть: ${act.selector}`;
+      else if (act.type === 'input') desc = `Ввести "${act.text}" в поле ${act.selector}`;
+      else desc = `Ожидание ${act.duration} мс`;
+      itemDiv.innerHTML = `
         <div class="action-icon">${icon}</div>
-        <div class="action-text">${escapeHtml(desc)}</div>
+        <div class="action-description">${escapeHtml(desc)}</div>
         <div class="action-controls">
-          <button class="move-up" data-idx="${idx}">▲ Вверх</button>
-          <button class="remove-act" data-idx="${idx}">✖ Удалить</button>
+          <button class="small secondary move-up" data-idx="${idx}">▲ Вверх</button>
+          <button class="small danger remove-action" data-idx="${idx}">✖ Удалить</button>
         </div>
       `;
-      row.querySelector('.move-up')?.addEventListener('click', (e) => {
-        if (idx > 0) {
-          [actions[idx-1], actions[idx]] = [actions[idx], actions[idx-1]];
-          renderActionsList();
-          addLog(`🔁 Действие ${idx+1} перемещено вверх`);
-        }
+      itemDiv.querySelector('.move-up')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        moveActionUp(idx);
       });
-      row.querySelector('.remove-act')?.addEventListener('click', (e) => {
-        actions.splice(idx, 1);
-        renderActionsList();
-        addLog(`🗑 Действие удалено`);
+      itemDiv.querySelector('.remove-action')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        removeAction(idx);
       });
-      actionsListDiv.appendChild(row);
+      actionsListDiv.appendChild(itemDiv);
     });
   }
 
-  // ---- Воспроизведение одного действия внутри iframe ----
-  async function executeActionInIframe(action) {
-    return new Promise((resolve, reject) => {
-      if (stopPlayFlag) return reject(new Error('Остановлено'));
-      if (!iframeDocument) return reject(new Error('Iframe не доступен'));
-
-      if (action.type === 'wait') {
-        addLog(`⏳ Пауза ${action.waitMs} мс...`);
-        setTimeout(() => resolve(true), action.waitMs);
-        return;
-      }
-      const targetElem = iframeDocument.querySelector(action.selector);
-      if (!targetElem) {
-        addLog(`❌ Элемент не найден: ${action.selector}`, true);
-        reject(new Error(`Элемент не найден`));
-        return;
-      }
-      targetElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      if (action.type === 'click') {
-        addLog(`🖱️ Клик по ${action.selector}`);
-        targetElem.click();
-        setTimeout(() => resolve(true), 100);
-      } else if (action.type === 'input') {
-        addLog(`⌨️ Ввод текста в ${action.selector} → "${action.text}"`);
-        targetElem.focus();
-        if (targetElem.tagName === 'INPUT' || targetElem.tagName === 'TEXTAREA') {
-          targetElem.value = action.text;
-          targetElem.dispatchEvent(new Event('input', { bubbles: true }));
-        } else if (targetElem.isContentEditable) {
-          targetElem.innerText = action.text;
-          targetElem.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-        setTimeout(() => resolve(true), 120);
-      } else {
-        resolve(true);
-      }
-    });
+  function moveActionUp(idx) {
+    if (idx <= 0) return;
+    [actions[idx-1], actions[idx]] = [actions[idx], actions[idx-1]];
+    renderActionsList();
+    addLog(`🔁 Действие ${idx+1} перемещено вверх`);
   }
-
-  async function runPlayback() {
-    if (isPlaying) {
-      addLog('Повтор уже запущен', true);
-      return;
-    }
-    if (!iframeDocument) {
-      addLog('Сначала загрузите сайт в окно', true);
-      return;
-    }
-    if (actions.length === 0) {
-      addLog('Нет записанных действий. Сначала что-то запишите.', true);
-      return;
-    }
-    const repeats = parseInt(repeatCountInput.value, 10);
-    if (isNaN(repeats) || repeats < 1) {
-      addLog('Количество повторов должно быть не меньше 1', true);
-      return;
-    }
-    const loopDelayMs = parseInt(loopDelayInput.value, 10);
-    isPlaying = true;
-    stopPlayFlag = false;
-    addLog(`🚀 ЗАПУСК ПОВТОРА: ${repeats} раз, действий: ${actions.length}`);
-    for (let cycle = 1; cycle <= repeats; cycle++) {
-      if (stopPlayFlag) break;
-      addLog(`🔄 Цикл ${cycle} из ${repeats}`);
-      for (let i = 0; i < actions.length; i++) {
-        if (stopPlayFlag) break;
-        try {
-          await executeActionInIframe(actions[i]);
-        } catch (err) {
-          addLog(`❌ Ошибка в цикле ${cycle}, шаг ${i+1}: ${err.message}`, true);
-          isPlaying = false;
-          stopPlayFlag = false;
-          return;
-        }
-      }
-      if (stopPlayFlag) break;
-      if (cycle < repeats && loopDelayMs > 0) {
-        addLog(`⏸️ Задержка ${loopDelayMs} мс перед следующим циклом...`);
-        await new Promise(r => setTimeout(r, loopDelayMs));
-      }
-    }
-    if (stopPlayFlag) {
-      addLog(`⏹️ Воспроизведение остановлено`);
-    } else {
-      addLog(`🎉 ВСЕ ПОВТОРЫ УСПЕШНО ЗАВЕРШЕНЫ (${repeats} раз)`);
-    }
-    isPlaying = false;
-    stopPlayFlag = false;
+  function removeAction(idx) {
+    const removed = actions.splice(idx, 1)[0];
+    renderActionsList();
+    addLog(`🗑 Удалено: ${formatActionText(removed)}`);
   }
-
-  function stopPlayback() {
-    if (!isPlaying) {
-      addLog('Нет активного повтора');
+  function clearAllActions() {
+    if (isRunning) {
+      addLog('Сначала остановите выполнение', true);
       return;
     }
-    stopPlayFlag = true;
-    addLog('🛑 Остановка повтора...');
-  }
-
-  function clearActions() {
-    if (isRecording) stopRecording();
-    if (isPlaying) stopPlayback();
     actions = [];
     renderActionsList();
-    addLog('🧹 Все записанные действия удалены');
+    addLog('🧹 Все действия удалены');
   }
 
   function declension(n) {
-    n = Math.abs(n);
     if (n % 10 === 1 && n % 100 !== 11) return 'действие';
     if ([2,3,4].includes(n % 10) && ![12,13,14].includes(n % 100)) return 'действия';
     return 'действий';
   }
+
+  // ---- ВЫПОЛНЕНИЕ ОДНОГО ДЕЙСТВИЯ (реальный DOM) ----
+  async function executeAction(action) {
+    return new Promise((resolve, reject) => {
+      if (stopFlag) return reject(new Error('Остановлено'));
+      if (action.type === 'wait') {
+        addLog(`⏳ Пауза ${action.duration} мс...`);
+        setTimeout(() => resolve(true), action.duration);
+        return;
+      }
+      if (action.type === 'click') {
+        addLog(`🖱️ Ищем элемент: ${action.selector}`);
+        const el = document.querySelector(action.selector);
+        if (!el) {
+          addLog(`❌ Не найден элемент: ${action.selector}`, true);
+          reject(new Error(`Элемент не найден: ${action.selector}`));
+          return;
+        }
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.click();
+        addLog(`✅ Клик выполнен по ${action.selector}`);
+        setTimeout(() => resolve(true), 100);
+        return;
+      }
+      if (action.type === 'input') {
+        addLog(`⌨️ Ищем поле ввода: ${action.selector}`);
+        const inputField = document.querySelector(action.selector);
+        if (!inputField) {
+          addLog(`❌ Поле ввода не найдено: ${action.selector}`, true);
+          reject(new Error(`Поле ввода не найдено: ${action.selector}`));
+          return;
+        }
+        inputField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        inputField.focus();
+        // Работаем с разными типами полей
+        if (inputField.tagName === 'INPUT' || inputField.tagName === 'TEXTAREA') {
+          inputField.value = action.text;
+          inputField.dispatchEvent(new Event('input', { bubbles: true }));
+          inputField.dispatchEvent(new Event('change', { bubbles: true }));
+        } else if (inputField.isContentEditable) {
+          inputField.innerText = action.text;
+          inputField.dispatchEvent(new Event('input', { bubbles: true }));
+        } else {
+          inputField.value = action.text;
+        }
+        addLog(`✅ Введён текст: "${action.text}" в поле ${action.selector}`);
+        setTimeout(() => resolve(true), 120);
+        return;
+      }
+      resolve(true);
+    });
+  }
+
+  // ГЛАВНЫЙ ЗАПУСК
+  async function runMacro() {
+    if (isRunning) {
+      addLog('⚠️ Выполнение уже активно, дождитесь или нажмите Остановить', true);
+      return;
+    }
+    if (actions.length === 0) {
+      addLog('❌ Нет действий. Добавьте хотя бы одно действие.', true);
+      return;
+    }
+    const repeats = parseInt(repeatCountInput.value, 10);
+    if (isNaN(repeats) || repeats < 1) {
+      addLog('❌ Количество повторений должно быть от 1', true);
+      return;
+    }
+    const delayBetween = parseInt(loopDelayInput.value, 10);
+    isRunning = true;
+    stopFlag = false;
+    addLog(`🚀 ЗАПУСК: ${repeats} цикл(ов), ${actions.length} действий в каждом. Задержка между циклами: ${delayBetween} мс`);
+    
+    for (let cycle = 1; cycle <= repeats; cycle++) {
+      if (stopFlag) break;
+      addLog(`🔄 Цикл ${cycle} / ${repeats} — начат`);
+      for (let i = 0; i < actions.length; i++) {
+        if (stopFlag) break;
+        try {
+          await executeAction(actions[i]);
+        } catch (err) {
+          addLog(`❌ Ошибка в цикле ${cycle}, действие ${i+1}: ${err.message}`, true);
+          isRunning = false;
+          stopFlag = false;
+          return;
+        }
+      }
+      if (stopFlag) break;
+      if (cycle < repeats && delayBetween > 0) {
+        addLog(`⏸️ Задержка ${delayBetween} мс перед следующим циклом...`);
+        await new Promise(res => setTimeout(res, delayBetween));
+      }
+    }
+    if (stopFlag) {
+      addLog(`⏹️ Остановлено пользователем`);
+    } else {
+      addLog(`🎉 АЛГОРИТМ УСПЕШНО ЗАВЕРШЁН! Выполнено ${repeats} циклов.`);
+    }
+    isRunning = false;
+    stopFlag = false;
+  }
+
+  function stopMacro() {
+    if (!isRunning) {
+      addLog('Нет активного выполнения', false);
+      return;
+    }
+    stopFlag = true;
+    addLog('🛑 Запрос остановки... (после текущего действия)');
+  }
+
+  // Пример: нажатие на кнопку → ввод текста → пауза
+  function loadExample() {
+    if (isRunning) {
+      addLog('Сначала остановите выполнение', true);
+      return;
+    }
+    actions = [];
+    actions.push({ type: 'click', selector: '#demoButton || можно заменить' }); // просто пример
+    actions.push({ type: 'input', selector: '#textField', text: 'Автоматический текст' });
+    actions.push({ type: 'wait', duration: 700 });
+    // более правильный пример с понятными селекторами (для демонстрации)
+    actions = [
+      { type: 'click', selector: 'button[type="submit"], .btn, #targetButton' },
+      { type: 'input', selector: 'input, textarea', text: 'Пример ввода' },
+      { type: 'wait', duration: 600 }
+    ];
+    renderActionsList();
+    addLog('📋 Загружен пример: клик по кнопке → ввод текста → пауза 600 мс. (измените селекторы под свою страницу!)');
+  }
+
+  // helpers
   function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
@@ -598,16 +613,15 @@
     });
   }
 
-  // Обработчики кнопок
-  loadSiteBtn.addEventListener('click', loadSite);
-  startRecordBtn.addEventListener('click', startRecording);
-  stopRecordBtn.addEventListener('click', stopRecording);
-  runPlayBtn.addEventListener('click', runPlayback);
-  stopPlayBtn.addEventListener('click', stopPlayback);
-  clearAllBtn.addEventListener('click', clearActions);
-
-  // Загружаем тестовую страницу по умолчанию
-  loadSite();
+  // Инициализация
+  actionTypeSelect.addEventListener('change', renderDynamicFields);
+  addActionBtn.addEventListener('click', addAction);
+  runBtn.addEventListener('click', runMacro);
+  stopBtn.addEventListener('click', stopMacro);
+  clearAllBtn.addEventListener('click', clearAllActions);
+  exampleBtn.addEventListener('click', loadExample);
+  renderDynamicFields();
+  renderActionsList();
 </script>
 </body>
 </html>
